@@ -9,6 +9,13 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { FormEvent } from "react"
 
 interface LoginFormProps extends React.ComponentProps<"div"> {
@@ -17,6 +24,10 @@ interface LoginFormProps extends React.ComponentProps<"div"> {
   blok: string
   isLoading: boolean
   error: string | null
+  blokList: string[]
+  nomorRumahList: string[]
+  isLoadingBlok: boolean
+  isLoadingNomorRumah: boolean
   onNoKkChange: (noKk: string) => void
   onNoRumahChange: (noRumah: string) => void
   onBlokChange: (blok: string) => void
@@ -30,6 +41,10 @@ export function LoginForm({
   blok,
   isLoading,
   error,
+  blokList,
+  nomorRumahList,
+  isLoadingBlok,
+  isLoadingNomorRumah,
   onNoKkChange,
   onNoRumahChange,
   onBlokChange,
@@ -67,28 +82,34 @@ export function LoginForm({
                 />
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="noRumah">Nomor Rumah</Label>
-                <Input
-                  id="noRumah"
-                  type="text"
-                  placeholder="Masukkan Nomor Rumah"
-                  value={noRumah}
-                  onChange={(e) => onNoRumahChange(e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
+                <Label htmlFor="blok">Blok</Label>
+                <Select value={blok} onValueChange={onBlokChange} disabled={isLoading || isLoadingBlok}>
+                  <SelectTrigger id="blok">
+                    <SelectValue placeholder={isLoadingBlok ? "Memuat..." : "Pilih Blok"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {blokList.map((blokItem) => (
+                      <SelectItem key={blokItem} value={blokItem}>
+                        {blokItem}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="blok">Blok</Label>
-                <Input
-                  id="blok"
-                  type="text"
-                  placeholder="Masukkan Blok"
-                  value={blok}
-                  onChange={(e) => onBlokChange(e.target.value)}
-                  required
-                  disabled={isLoading}
-                />
+                <Label htmlFor="noRumah">Nomor Rumah</Label>
+                <Select value={noRumah} onValueChange={onNoRumahChange} disabled={isLoading || !blok || isLoadingNomorRumah}>
+                  <SelectTrigger id="noRumah">
+                    <SelectValue placeholder={isLoadingNomorRumah ? "Memuat..." : blok ? "Pilih Nomor Rumah" : "Pilih Blok terlebih dahulu"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {nomorRumahList.map((nomorItem) => (
+                      <SelectItem key={nomorItem} value={nomorItem}>
+                        {nomorItem}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? 'Logging in...' : 'Login'}
